@@ -37,4 +37,4 @@ print seen_attributes
 
 
 print "nodes numbers: ", nx.number_of_nodes(G)
-mp.draw(G[, pos, ax, hold])
+#mp.draw()

@@ -47,7 +47,7 @@ def __calc_node_cnc(G_undirected, target_node, k_clique):
     for node in k_clique:
         if target_node != node:
            sum_cnc += len(sorted(nx.common_neighbors(G_undirected, target_node, node))) #- len(k_clique) + 2
-           print "sum_cnc: ", sum_cnc
+           #print "sum_cnc: ", sum_cnc
     return float(sum_cnc)
 
 
@@ -84,7 +84,7 @@ def find_k_clique_seed(lgraph, rgraph, k, e):
                         rnode_cnc = __calc_node_cnc(rgraph_undirected, rnode, rgraph_k_clq)
                         lnode_degree = float(lgraph.degree(lnode))
                         rnode_degree = float(rgraph.degree(rnode))
-                        print "lnode, rnode ", lnode_cnc, rnode_cnc
+                        #print "lnode, rnode ", lnode_cnc, rnode_cnc
 
 
                         if (1-e <= (lnode_cnc/rnode_cnc) <= 1+e) and \
@@ -117,6 +117,7 @@ def never_seen_before (node_to_add, user_id, user_name):
 
 
 if __name__ == '__main__':
+    #path = 'C:\Users\JonyC\Documents\GitHub\PAC-Proj1\NodeLists'
     path = 'C:\Users\JonyC\Desktop\NodeLists'
     os.chdir(path)
     seen_attributes = set()
@@ -131,6 +132,7 @@ if __name__ == '__main__':
         #print(filename)
         userID = filename[:filename.find(' ')].encode('utf-8')
         userName = filename[filename.find(' ')+1:filename.find('.txt')].encode('utf-8')
+
         never_seen = never_seen_before(nodeIndex,userID,userName)
 
         if never_seen == True:
@@ -153,14 +155,14 @@ if __name__ == '__main__':
                 for i in range(len(seen_attributes)):
                     if Gaux.node[i+1]['userID'] == userID:
                         Gaux.add_edge(fileIndex,i+1)
-                        print "fileIndex, nodeIndex i",fileIndex, i+1
+                        #print "fileIndex, nodeIndex i",fileIndex, i+1
             if never_seen ==True:
                 Gaux.add_edge(fileIndex,nodeIndex-1)
-                print "fileIndex, nodeIndex", fileIndex, nodeIndex-1
+                #print "fileIndex, nodeIndex", fileIndex, nodeIndex-1
 
             line = data.readline()
         data.close
-    #print "name ", Gaux[5]['userName']
+    print "name ", Gaux.node[5]['userName']
     ''' Gsan Generation'''
     Gsan=Gaux
     for i in range(nx.number_of_nodes(Gsan)):
