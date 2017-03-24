@@ -98,17 +98,43 @@ def find_k_clique_seed(lgraph, rgraph, k, e):
     else:
         print 'No k-cliques have been found'
 
+def Gaux_never_seen_before (node_to_add, filename):
+    node = node_to_add #node_to_add
+    global seen_attributes
+    global Gaux
+    global fileIndex
+    userID = filename[:filename.find(' ')].encode('utf-8')
+    userName = filename[filename.find(' ')+1:filename.find('.txt')].encode('utf-8')
+    #attribute = userID
+    print "userID, userName ", userID, userName
+    if userID in seen_attributes:
+        for i in range(len(seen_attributes)):
+            if G.node[i][userID]==userID:
+                fileIndex=i
+
+    global nodeIndex
+    if userID not in seen_attributes:
+        Gaux.add_node(node, userID = userID)
+        Gaux.node[node]['userName']=userName
+        fileIndex=node_to_add
+        nodeIndex=nodeIndex+1
+        seen_attributes.add(userID)
 
 
 '''An Example of how to use the function'''
 if __name__ == '__main__':
     path = 'C:\Users\JonyC\Documents\GitHub\PAC-Proj1\NodeLists'
+    seen_attributes = set()
     Gsan = nx.DiGraph()
     Gaux = nx.DiGraph()
+
     nodeIndex=0
     for filename in os.listdir(path):
-        print(filename)
-        
+        #print(filename)
+        Gaux_never_seen_before(nodeIndex,filename)
+        fileIndex=0
+
+        print "fileIndex, filename", fileIndex, filename
 
         os.chdir(path)
         data = codecs.open(filename,'r','utf-8')
@@ -118,14 +144,13 @@ if __name__ == '__main__':
             print line.encode('utf-8')
             userID = line[:line.find(' ')].encode('utf-8')
             userName = line[line.find(' ')+1:].encode('utf-8')
+            Gaux.add_node(nodeIndex, userID=userID)
+            Gaux.node[nodeIndex]['userName']=userName
+            Gaux.add_edge(fileIndex,nodeIndex)
 
-            print "userID, userName ", userID, userName
+            #print "userID, userName ", userID, userName
+            #print "Gaux userID, userName", Gaux.node[nodeIndex]['userID'], Gaux.node[nodeIndex]['userName']
             line = data.readline()
         data.close
-
-    Gsan.add_node(nodeIndex, nodeId=ID)
-    Gsan.add_edge(1,3)
-
-
 
     print find_k_clique_seed(lgraph=Gsan, rgraph=Gaux, k=3, e=0.1)

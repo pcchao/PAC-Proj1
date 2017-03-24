@@ -17,11 +17,12 @@ print G.node[1]['time']
 
 
 seen_attributes = set()
+seen_attributes.add('nihao')
 #seen_attributes.add('attribute_of_node')
 
 # code here adding nodes
 
-node = 1 #node_to_add
+node = 0 #node_to_add
 attribute = 'attribute_of_node'
 
 if attribute not in seen_attributes:
@@ -29,3 +30,6 @@ if attribute not in seen_attributes:
     G.add_node(node, coord=attribute)
     seen_attributes.add(attribute)
 print seen_attributes
+
+#for i in range(len(seen_attributes)):
+#    print i#len(seen_attributes)
