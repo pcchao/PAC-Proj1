@@ -101,6 +101,7 @@ def find_k_clique_seed(lgraph, rgraph, k, e):
 
 def never_seen_before (node_to_add, user_id, user_name):
     global nodeIndex
+    global seen_attributes
     if user_id not in seen_attributes:
         Gaux.add_node(node_to_add, userID = user_id)
         Gaux.node[node_to_add]['userName']=user_name
@@ -133,23 +134,24 @@ if __name__ == '__main__':
             for i in range(len(seen_attributes)):
                 if Gaux.node[i]['userID'] == userID:
                     fileIndex=i
+                    print "userName: ", Gaux.node[i]['userName']
 
         data = codecs.open(filename,'r','utf-8')
         line = data.readline()
         while line:
+            #print "nodeIndex: ", nodeIndex
             userID = line[:line.find(' ')].encode('utf-8')
             userName = line[line.find(' ')+1:].encode('utf-8')
             never_seen_before(nodeIndex,userID,userName)
             Gaux.add_edge(fileIndex,nodeIndex)
-
             #print "userID, userName ", userID, userName
             #print "Gaux userID, userName", Gaux.node[nodeIndex]['userID'], Gaux.node[nodeIndex]['userName']
             line = data.readline()
         data.close
-        
+
     ''' Gsan Generation'''
     Gsan=Gaux
     for i in range(nx.number_of_nodes(Gsan)):
         Gsan.node[i]['userName']=''
 
-    print find_k_clique_seed(lgraph=Gsan, rgraph=Gaux, k=3, e=0.1)
+    print find_k_clique_seed(lgraph=Gaux, rgraph=Gsan, k=3, e=0.1)
