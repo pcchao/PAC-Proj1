@@ -93,15 +93,97 @@ def find_k_clique_seed(lgraph, rgraph, k, e):
 
                 if len(seed_mapping) == k:
                     seed_mappings.append(copy.copy(seed_mapping))
-                    seed_mapping.clear()
+                    "seed_mapping.clear()"
                     rgraph_k_clqs.remove(rgraph_k_clq)
                     lgraph_k_clqs.remove(lgraph_k_clq)
                     break
 
-        return seed_mappings
+        return seed_mapping
 
     else:
         print 'No k-cliques have been found'
+
+
+def PropagationStep(Gl, Gr, mapping):
+    lgraph = Gl
+    rgraph = Gr
+    theta = 0.1
+    scores = [0 for lnode in nx.nodes(lgraph)]
+
+    if mapping is None:
+        print "there is no k-clique mapping data"
+    else:
+        for lnode in nx.nodes(lgraph):
+            if lnode in mapping: continue
+            scores[lnode] = matchScores(lgraph, rgraph, mapping, lnode)
+
+
+            if eccentricity(scores[lnode]) < theta : continue
+
+            for node in nx.nodes(rgraph):
+                if scores[lnode][node] == max(scores[lnode]):
+                    rnode = node
+
+            scores[rnode] = matchScores(lgraph, rgraph, invert_mapping(mapping), rnode)
+
+            if eccentricity(scores[rnode]) < theta : continue
+            for node in nx.nodes(lgraph):
+
+                if scores[rnode][node] == max(scores[lnode]):
+                    reverse_match = node
+
+                    if reverse_match !=lnode: continue
+            mapping[lnode] = rnode
+
+    return mapping
+
+
+def matchScores (lgraph, rgraph, mapping, lnode):
+    scores = [0 for rnode in nx.nodes(rgraph)]
+
+    a = lnode
+
+    for (lnbr, lnode_) in nx.edges(lgraph):
+
+        if lnode_ == a:
+
+            if lnbr not in mapping: continue
+            rnbr = mapping[lnbr]
+            b = rnbr
+            for (rnbr_, rnode) in nx.edges(rgraph):
+                if rnbr_ == b:
+                    if rnode in mapping: continue
+                    scores[rnode] += 1 / rgraph.in_degree(rnode) ** 0.5
+
+    for (lnode_, lnbr) in nx.edges(lgraph):
+
+        if lnode_ == a:
+
+            if lnbr not in mapping: continue
+            rnbr = mapping[lnbr]
+
+            b = rnbr
+            for (rnode,rnbr_) in nx.edges(rgraph):
+                if rnbr_ == b:
+                    if rnode in mapping: continue
+                    scores[rnode] += 1 / rgraph.out_degree(rnode) ** 0.5
+
+    return scores
+
+def eccentricity(items):
+    import numpy
+    return (max(items)-max_sec(items)) / numpy.std(items)
+
+
+def max_sec(items):
+    a = sorted(items)
+    a_sec_max = a[-2]
+    return a_sec_max
+
+def invert_mapping(d):
+    return dict([(v, k) for k, v in d.iteritems()])
+
+
 
 
 def never_seen_before (node_to_add, user_id, user_name):
@@ -168,10 +250,11 @@ if __name__ == '__main__':
     for i in range(nx.number_of_nodes(Gsan)):
         Gsan.node[i+1]['userName']=''
 
-    print find_k_clique_seed(lgraph=Gaux, rgraph=Gsan, k=3, e=0.1)
+    a = find_k_clique_seed(lgraph=Gaux, rgraph=Gsan, k=3, e=0.1)
+    print PropagationStep(Gaux, Gsan, a)
     #print "",Gaux.node[0]['userID'], Gaux.node[0]['userName']
 
-    nx.draw(Gsan)
+    #nx.draw(Gsan)
     #plt.hold(True)
     #plt.savefig("path.png")
-    plt.show()
+    #plt.show()
