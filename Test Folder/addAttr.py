@@ -1,5 +1,6 @@
 try:
     import networkx as nx
+    import matplotlib as mp
 except ImportError:
     print 'Fail to import networkx! Programing terminates'
     print 'Please install by: pip install networkx'
@@ -33,3 +34,7 @@ print seen_attributes
 
 #for i in range(len(seen_attributes)):
 #    print i#len(seen_attributes)
+
+
+print "nodes numbers: ", nx.number_of_nodes(G)
+mp.draw(G[, pos, ax, hold])

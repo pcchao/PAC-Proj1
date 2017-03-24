@@ -98,59 +98,90 @@ def find_k_clique_seed(lgraph, rgraph, k, e):
     else:
         print 'No k-cliques have been found'
 
-def Gaux_never_seen_before (node_to_add, filename):
+def Gaux_never_seen_before (node_to_add, user_id, user_name):
     node = node_to_add #node_to_add
     global seen_attributes
     global Gaux
     global fileIndex
-    userID = filename[:filename.find(' ')].encode('utf-8')
-    userName = filename[filename.find(' ')+1:filename.find('.txt')].encode('utf-8')
-    #attribute = userID
-    print "userID, userName ", userID, userName
-    if userID in seen_attributes:
-        for i in range(len(seen_attributes)):
-            if G.node[i][userID]==userID:
-                fileIndex=i
 
+    #attribute = userID
+    #print "userID, userName ", userID, userName
+    if user_id in seen_attributes:
+        for i in range(len(seen_attributes)):
+            if Gaux.node[i]['userID']==user_id:
+                fileIndex=i
+                print "common user ID: ", userID
+    #print "fileIndex 2 unchanged: ", fileIndex
     global nodeIndex
-    if userID not in seen_attributes:
-        Gaux.add_node(node, userID = userID)
-        Gaux.node[node]['userName']=userName
+    if user_id not in seen_attributes:
+        Gaux.add_node(node, userID = user_id)
+        Gaux.node[node]['userName']=user_name
         fileIndex=node_to_add
         nodeIndex=nodeIndex+1
-        seen_attributes.add(userID)
+        seen_attributes.add(user_id)
+        #print "fileIndex 3 changed: ", fileIndex
+
+def never_seen_before (node_to_add, user_id, user_name):
+    global nodeIndex
+    if user_id not in seen_attributes:
+        Gaux.add_node(node_to_add, userID = user_id)
+        Gaux.node[node_to_add]['userName']=user_name
+        nodeIndex=nodeIndex+1
+        seen_attributes.add(user_id)
+        return True
+    return False
 
 
-'''An Example of how to use the function'''
 if __name__ == '__main__':
     path = 'C:\Users\JonyC\Documents\GitHub\PAC-Proj1\NodeLists'
+    os.chdir(path)
     seen_attributes = set()
     Gsan = nx.DiGraph()
     Gaux = nx.DiGraph()
 
+    '''Gaux Generation'''
     nodeIndex=0
+    fileIndex=0
     for filename in os.listdir(path):
+        ''' file Name Node'''
         #print(filename)
-        Gaux_never_seen_before(nodeIndex,filename)
-        fileIndex=0
+        userID = filename[:filename.find(' ')].encode('utf-8')
+        userName = filename[filename.find(' ')+1:filename.find('.txt')].encode('utf-8')
+        never_seen = never_seen_before(nodeIndex,userID,userName)
 
-        print "fileIndex, filename", fileIndex, filename
+        if never_seen == True:
+            fileIndex=nodeIndex-1
+            #nodeIndex=nodeIndex+1
+        if never_seen == False:
+            for i in range(len(seen_attributes)):
+                if Gaux.node[i]['userID'] == userID:
+                    fileIndex=i
 
-        os.chdir(path)
+        #fileIndex=0
+        #print "fileIndex 1, filename", fileIndex, filename
+
         data = codecs.open(filename,'r','utf-8')
         line = data.readline()
 
         while line:
-            print line.encode('utf-8')
+            #print line.encode('utf-8')
             userID = line[:line.find(' ')].encode('utf-8')
             userName = line[line.find(' ')+1:].encode('utf-8')
-            Gaux.add_node(nodeIndex, userID=userID)
-            Gaux.node[nodeIndex]['userName']=userName
+            #Gaux_never_seen_before(nodeIndex, userID,userName)
+            never_seen_before(nodeIndex,userID,userName)
+
+            #Gaux.add_node(nodeIndex, userID=userID)
+            #Gaux.node[nodeIndex]['userName']=userName
+
             Gaux.add_edge(fileIndex,nodeIndex)
 
             #print "userID, userName ", userID, userName
             #print "Gaux userID, userName", Gaux.node[nodeIndex]['userID'], Gaux.node[nodeIndex]['userName']
             line = data.readline()
         data.close
+    ''' Gsan Generation'''
+    Gsan=Gaux
+    for i in range(nx.number_of_nodes(Gsan)):
+        Gsan.node[i]['userName']=''
 
     print find_k_clique_seed(lgraph=Gsan, rgraph=Gaux, k=3, e=0.1)
