@@ -10,5 +10,9 @@ PAC_Craw.py
 The source code for the node crawling
 
 clique_find.py
--source code for Graph generate (Auxilliary Graph and Sanitized Graph)
+-Source code for:
+  >Graph generate (Auxilliary Graph and Sanitized Graph) and 
+  >Seed Indentification
+  >Propagation
 -To run the code, "path" need to change for the local environment for the address of Nodelists folder
+
