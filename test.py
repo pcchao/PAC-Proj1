@@ -10,5 +10,8 @@ for filename in os.listdir(path):
 
     while line:
         print line.encode('utf-8')
+        userID = line[:line.find(' ')].encode('utf-8')
+        userName = line[line.find(' ')+1:].encode('utf-8')
+        print "userID, userName ", userID, userName
         line = data.readline()
     data.close
