@@ -6,6 +6,8 @@ except ImportError:
     sys.exit()
 
 import copy
+import codecs
+import os
 
 
 def __find_k_cliques(G, k):
@@ -100,13 +102,30 @@ def find_k_clique_seed(lgraph, rgraph, k, e):
 
 '''An Example of how to use the function'''
 if __name__ == '__main__':
-    data = codecs.open()
-    Gleft = nx.DiGraph()
-    Gright = nx.DiGraph()
-    #read file
-    Gleft.add_node(nodeIndex, nodeId=ID)
-    Gleft.add_edge(1,3)
+    path = 'C:\Users\JonyC\Documents\GitHub\PAC-Proj1\NodeLists'
+    Gsan = nx.DiGraph()
+    Gaux = nx.DiGraph()
+    nodeIndex=0
+    for filename in os.listdir(path):
+        print(filename)
+        
+
+        os.chdir(path)
+        data = codecs.open(filename,'r','utf-8')
+        line = data.readline()
+
+        while line:
+            print line.encode('utf-8')
+            userID = line[:line.find(' ')].encode('utf-8')
+            userName = line[line.find(' ')+1:].encode('utf-8')
+
+            print "userID, userName ", userID, userName
+            line = data.readline()
+        data.close
+
+    Gsan.add_node(nodeIndex, nodeId=ID)
+    Gsan.add_edge(1,3)
 
 
 
-    print find_k_clique_seed(lgraph=G, rgraph=G, k=3, e=0.1)
+    print find_k_clique_seed(lgraph=Gsan, rgraph=Gaux, k=3, e=0.1)
