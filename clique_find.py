@@ -1,5 +1,6 @@
 try:
     import networkx as nx
+    import matplotlib.pyplot as plt
 except ImportError:
     print 'Fail to import networkx! Programing terminates'
     print 'Please install by: pip install networkx'
@@ -36,15 +37,17 @@ def __find_k_cliques(G, k):
         return None
 
     else:
+        #print "k_cliques_list: ", k_cliques_list
         return k_cliques_list
+
 
 def __calc_node_cnc(G_undirected, target_node, k_clique):
     sum_cnc = 0
 
     for node in k_clique:
         if target_node != node:
-           sum_cnc += len(sorted(nx.common_neighbors(G_undirected, target_node, node))) - len(k_clique) + 2
-
+           sum_cnc += len(sorted(nx.common_neighbors(G_undirected, target_node, node))) #- len(k_clique) + 2
+           print "sum_cnc: ", sum_cnc
     return float(sum_cnc)
 
 
@@ -79,8 +82,10 @@ def find_k_clique_seed(lgraph, rgraph, k, e):
                     for rnode in rgraph_k_clq:
                         lnode_cnc = __calc_node_cnc(lgraph_undirected, lnode, lgraph_k_clq)
                         rnode_cnc = __calc_node_cnc(rgraph_undirected, rnode, rgraph_k_clq)
-                        lnode_degree = float(G.degree(lnode))
-                        rnode_degree = float(G.degree(rnode))
+                        lnode_degree = float(lgraph.degree(lnode))
+                        rnode_degree = float(rgraph.degree(rnode))
+                        print "lnode, rnode ", lnode_cnc, rnode_cnc
+
 
                         if (1-e <= (lnode_cnc/rnode_cnc) <= 1+e) and \
                             (1-e <= (lnode_degree/rnode_degree) <= 1+e):
@@ -112,15 +117,15 @@ def never_seen_before (node_to_add, user_id, user_name):
 
 
 if __name__ == '__main__':
-    path = 'C:\Users\JonyC\Documents\GitHub\PAC-Proj1\NodeLists'
+    path = 'C:\Users\JonyC\Desktop\NodeLists'
     os.chdir(path)
     seen_attributes = set()
     Gsan = nx.DiGraph()
     Gaux = nx.DiGraph()
 
     '''Gaux Generation'''
-    nodeIndex=0
-    fileIndex=0
+    nodeIndex=1
+    fileIndex=1
     for filename in os.listdir(path):
         ''' file Name processing'''
         #print(filename)
@@ -132,9 +137,10 @@ if __name__ == '__main__':
             fileIndex=nodeIndex-1
         if never_seen == False:
             for i in range(len(seen_attributes)):
-                if Gaux.node[i]['userID'] == userID:
-                    fileIndex=i
-                    print "userName: ", Gaux.node[i]['userName']
+                if Gaux.node[i+1]['userID'] == userID:
+                    fileIndex=i+1
+                    #print "userName: ", Gaux.node[i]['userName']
+                    #print "seen_attributes: ", seen_attributes
 
         data = codecs.open(filename,'r','utf-8')
         line = data.readline()
@@ -142,16 +148,28 @@ if __name__ == '__main__':
             #print "nodeIndex: ", nodeIndex
             userID = line[:line.find(' ')].encode('utf-8')
             userName = line[line.find(' ')+1:].encode('utf-8')
-            never_seen_before(nodeIndex,userID,userName)
-            Gaux.add_edge(fileIndex,nodeIndex)
-            #print "userID, userName ", userID, userName
-            #print "Gaux userID, userName", Gaux.node[nodeIndex]['userID'], Gaux.node[nodeIndex]['userName']
+            never_seen = never_seen_before(nodeIndex,userID,userName)
+            if never_seen == False:
+                for i in range(len(seen_attributes)):
+                    if Gaux.node[i+1]['userID'] == userID:
+                        Gaux.add_edge(fileIndex,i+1)
+                        print "fileIndex, nodeIndex i",fileIndex, i+1
+            if never_seen ==True:
+                Gaux.add_edge(fileIndex,nodeIndex-1)
+                print "fileIndex, nodeIndex", fileIndex, nodeIndex-1
+
             line = data.readline()
         data.close
-
+    #print "name ", Gaux[5]['userName']
     ''' Gsan Generation'''
     Gsan=Gaux
     for i in range(nx.number_of_nodes(Gsan)):
-        Gsan.node[i]['userName']=''
+        Gsan.node[i+1]['userName']=''
 
     print find_k_clique_seed(lgraph=Gaux, rgraph=Gsan, k=3, e=0.1)
+    #print "",Gaux.node[0]['userID'], Gaux.node[0]['userName']
+
+    nx.draw(Gsan)
+    #plt.hold(True)
+    #plt.savefig("path.png")
+    plt.show()
