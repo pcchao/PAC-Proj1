@@ -17,3 +17,15 @@ print G.node[1]['time']
 
 
 seen_attributes = set()
+#seen_attributes.add('attribute_of_node')
+
+# code here adding nodes
+
+node = 1 #node_to_add
+attribute = 'attribute_of_node'
+
+if attribute not in seen_attributes:
+    print "not in seen_attributes set"
+    G.add_node(node, coord=attribute)
+    seen_attributes.add(attribute)
+print seen_attributes
