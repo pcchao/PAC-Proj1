@@ -108,7 +108,8 @@ def PropagationStep(Gl, Gr, mapping):
     lgraph = Gl
     rgraph = Gr
     theta = 0.1
-    b = nx.nodes(lgraph)*2
+    b = nx.nodes(lgraph)
+    b.append([0])
     scores = [0 for lnode in b]
 
     for lnode in nx.nodes(lgraph):
@@ -142,7 +143,8 @@ def PropagationStep(Gl, Gr, mapping):
 
 
 def matchScores (lgraph, rgraph, mapping, lnode):
-    c = nx.nodes(rgraph)*2
+    c = nx.nodes(rgraph)
+    c.append(0)
     scores = [0 for rnode in c]
 
     a = lnode
@@ -176,8 +178,10 @@ def matchScores (lgraph, rgraph, mapping, lnode):
 
 def eccentricity(items):
     import numpy
-    return (max(items) - max_sec(items)) / numpy.std(items)
-
+    if all(v == 0 for v in items):
+        return 0
+    else:
+        return (max(items) - max_sec(items)) / numpy.std(items)
 
 
 def max_sec(numbers):
@@ -210,7 +214,7 @@ def never_seen_before (node_to_add, user_id, user_name):
 
 if __name__ == '__main__':
     #path = 'C:\Users\JonyC\Documents\GitHub\PAC-Proj1\NodeLists'
-    path = 'C:\Users\JonyC\Desktop\nodes-master\nodes331'
+    path = 'C:\Users\JonyC\Desktop\RunNode'
     os.chdir(path)
     seen_attributes = set()
     Gsan = nx.DiGraph()
@@ -222,8 +226,10 @@ if __name__ == '__main__':
     for filename in os.listdir(path):
         ''' file Name processing'''
         #print(filename)
-        userID = filename[:filename.find(' ')].encode('utf-8')
-        userName = filename[filename.find(' ')+1:filename.find('.txt')].encode('utf-8')
+        userID = filename[:filename.find('.txt')]
+        userName = ''
+        #userID = filename[:filename.find(' ')].encode('utf-8')
+        #userName = filename[filename.find(' ')+1:filename.find('.txt')].encode('utf-8')
 
         never_seen = never_seen_before(nodeIndex,userID,userName)
 
@@ -254,7 +260,7 @@ if __name__ == '__main__':
 
             line = data.readline()
         data.close
-    print "name ", Gaux.node[5]['userName']
+    #print "name ", Gaux.node[5]['userName']
     ''' Gsan Generation'''
     Gsan=Gaux
     for i in range(nx.number_of_nodes(Gsan)):
@@ -262,11 +268,27 @@ if __name__ == '__main__':
 
     a = find_k_clique_seed(lgraph=Gaux, rgraph=Gsan, k=3, e=0.1)
     #print a
-    print PropagationStep(Gaux, Gsan, a)
-
+    print a
+    #ps = PropagationStep(Gaux, Gsan, a)
+    #print ps
+    #data = codecs.open('mappings.txt','w+','utf-8')
+    #data.write("%s" %ps)
+    #data.close
     #print "",Gaux.node[0]['userID'], Gaux.node[0]['userName']
-
+    print Gaux.node[1]['userID']
     #nx.draw(Gsan)
     #plt.hold(True)
     #plt.savefig("path.png")
     #plt.show()
+
+Denominator =0.0
+Numerator=0.0
+for node in ps:
+    if Gaux.node[node]['userID'] == Gsan.node[ps[node]]['userID']:
+        Numerator = Numerator+ Gaux.degree(node)
+    Denominator = Denominator + Gaux.degree(node)
+succ_rate = (Numerator/Denominator)*100
+
+print "success rate:", succ_rate, "%"
+err_rate = 100-succ_rate
+print "error rate:",err_rate,"%"
