@@ -108,8 +108,7 @@ def PropagationStep(Gl, Gr, mapping):
     lgraph = Gl
     rgraph = Gr
     theta = 0.1
-    b = nx.nodes(lgraph)
-    b.append([0])
+    b = nx.nodes(lgraph)*2
     scores = [0 for lnode in b]
 
     for lnode in nx.nodes(lgraph):
@@ -143,8 +142,7 @@ def PropagationStep(Gl, Gr, mapping):
 
 
 def matchScores (lgraph, rgraph, mapping, lnode):
-    c = nx.nodes(rgraph)
-    c.append([0])
+    c = nx.nodes(rgraph)*2
     scores = [0 for rnode in c]
 
     a = lnode
@@ -178,10 +176,7 @@ def matchScores (lgraph, rgraph, mapping, lnode):
 
 def eccentricity(items):
     import numpy
-    if all(v == 0 for v in items):
-        return 0
-    else:
-        return (max(items) - max_sec(items)) / numpy.std(items)
+    return (max(items) - max_sec(items)) / numpy.std(items)
 
 
 
@@ -215,12 +210,13 @@ def never_seen_before (node_to_add, user_id, user_name):
 
 if __name__ == '__main__':
     #path = 'C:\Users\JonyC\Documents\GitHub\PAC-Proj1\NodeLists'
-    path = 'C:\Users\JonyC\Desktop\NodeLists'
+    path = 'C:\Users\JonyC\Desktop\nodes-master\nodes331'
     os.chdir(path)
     seen_attributes = set()
     Gsan = nx.DiGraph()
     Gaux = nx.DiGraph()
 
+    '''Gaux Generation'''
     nodeIndex=1
     fileIndex=1
     for filename in os.listdir(path):
@@ -258,7 +254,7 @@ if __name__ == '__main__':
 
             line = data.readline()
         data.close
-    #print "name ", Gaux.node[5]['userName']
+    print "name ", Gaux.node[5]['userName']
     ''' Gsan Generation'''
     Gsan=Gaux
     for i in range(nx.number_of_nodes(Gsan)):
