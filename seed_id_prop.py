@@ -275,15 +275,14 @@ if __name__ == '__main__':
     #plt.savefig("path.png")
     #plt.show()
 
-        Denominator =0.0
-        Numerator=0.0
-        for node in ps:
-            rnode =ps[node]
-            if Gaux.node[node]['userID'] == Gsan.node[rnode]['userID']:
-                Numerator = Numerator+ Gaux.degree(node)
-            Denominator = Denominator + Gaux.degree(node)
-        succ_rate = (Numerator/Denominator)*100
+    Denominator =0.0
+    Numerator=0.0
+    for node in ps:
+        if Gaux.node[node]['userID'] == Gsan.node[ps[node]]['userID']:
+            Numerator = Numerator+ Gaux.degree(node)
+        Denominator = Denominator + Gaux.degree(node)
+    succ_rate = (Numerator/Denominator)*100
 
-        print "Success Rate:", succ_rate, "%"
-        err_rate = 100-succ_rate
-        print "error rate:",err_rate,"%"
+    print "success rate:", succ_rate, "%"
+    err_rate = 100-succ_rate
+    print "error rate:",err_rate,"%"
