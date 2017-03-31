@@ -17,7 +17,7 @@
   -Each single file records the friends list of the user
   -Crawling based on BFS(Breath First Search)
 
-  4.2 PAC_Craw.py
+  4.2 pac_craw_opt.py
   The source code for the node crawling
 
   4.3 seed_id_prop.py
