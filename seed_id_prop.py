@@ -226,8 +226,10 @@ if __name__ == '__main__':
     for filename in os.listdir(path):
         ''' file Name processing'''
         #print(filename)
-        userID = filename[:filename.find(' ')].encode('utf-8')
-        userName = filename[filename.find(' ')+1:filename.find('.txt')].encode('utf-8')
+        userID = filename[:filename.find('.txt')]
+        userName = ''
+        #userID = filename[:filename.find(' ')].encode('utf-8')
+        #userName = filename[filename.find(' ')+1:filename.find('.txt')].encode('utf-8')
 
         never_seen = never_seen_before(nodeIndex,userID,userName)
 
