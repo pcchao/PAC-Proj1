@@ -11,7 +11,7 @@
   -To run the code, "path" in clique_find.py need to change for the local environment for the address of Nodelists folder
   
 4. Files Intro
-  4.1 NodeLists Files 
+  4.1 Nodes Files 
   Record all the files crawled from twitter
   -File named with the user and his/her id who has been crawled
   -Each single file records the friends list of the user
